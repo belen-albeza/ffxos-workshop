@@ -68,4 +68,29 @@ The standard font that comes with Firefox OS is `Feura Sans`, which you can [dow
 
 After you have included the CSS stylesheets in your HTML document, **you need to add the attribute** `role="application"` to your body tag. If you don't do this, the Building Blocks won't work.
 
+To put a Building Block in your app, you need to use a specific HTML code. You can grab this code from the `index.html` file in each Building Block folder, or from the Building Firefox OS page. For instance, [this is the code](http://buildingfirefoxos.com/building-blocks/headers.html) that you need to use for a simple heading:
+
+```html
+  <section role="region">
+    <header>
+      <h1>Hello Gaia BB!</h1>
+    </header>
+  </section>
+```
+
+One common pattern in applications is to have the header always visible on top, and then make only the rest of the window scrollable. You can have this behavior easily if you include the `util.css` stylesheet in your app. Then you need to add the class `fixed` to the header, and put your content inside an `<article>` with the classes `scrollable header`. For example:
+
+```html
+<body role="application">
+  <section role="region">
+    <header class="fixed">
+      <h1>Rainbows</h1>
+    </header>
+    <article class="scrollable header">
+      <p>Sparkling unicorns!</p>
+    </article>
+  </section>
+</body>
+```
+
 
