@@ -97,13 +97,13 @@ One common pattern in applications is to have the header always visible on top, 
 
 Located at `webapi-contacts`.
 
-TODO screenshot.
+![Contacts WebAPI demo](images/contacts_screenshot.png)
 
 #### Permissions and certified apps
 
-You need to specify the permissions that you need the user to grant. Also, the Contacts WebAPI is only available at privileged or certified apps; that is, apps from the Marketplace or system apps.
+You need to **specify the permissions** that you need the user to grant. Also, the Contacts WebAPI is only available at privileged or certified apps; that is, apps from the Marketplace or system apps.
 
-To mark our app as privileged (to be distributed via a Marketplace), you need to update the manifest with the `type` setting. Permissions are stored int he `permissions` keys. You can find a list of all permissions and their different options [in the MDN](https://developer.mozilla.org/en-US/Apps/Developing/App_permissions). TODO link to documentation with list on permissions and another link to info about privileged and certified apps.
+To mark our app as privileged (to be distributed via a Marketplace), you need to update the manifest with the `type` setting. Permissions are stored int he `permissions` keys. You can find a list of all permissions and their different options [in the MDN](https://developer.mozilla.org/en-US/Apps/Developing/App_permissions).
 
 For this demo, we need to ask for reading access, so we can display the contacts list.
 
@@ -117,5 +117,41 @@ For this demo, we need to ask for reading access, so we can display the contacts
 }
 ```
 
+When the app tries to access the contacts, a dialog to grant permission to do so will be shown to the user:
+
+![Permission dialog](images/contacts_permission.png)
+
 #### Contacts WebAPI
 
+The [Contacts WebAPI](https://developer.mozilla.org/en-US/docs/WebAPI/Contacts) is accessed via a `ContactManager` stored in `navigator.mozContacts`. This object is not still ready on the desktop version of Firefox, so you will need to use the simulator to try this API.
+
+The method to read the contacts is called `getAll`, and we can pass an `Object` containing the sorting and filter options. We need to supply two callbacks: `onsuccess` (will be called for each contact read) and `onerror` (it will be called if the user doesn't grant permission).
+
+```js
+function readContacts() {
+  var contacts = navigator.mozContacts.getAll({});
+  contacts.onsuccess = function (event) {
+    // ...
+  };
+  contacts.onerror = function (event) {
+    // ...
+  }
+}
+```
+
+The Contacts WebAPI is **asynchronous**. This is very useful, because this list can be really long, and we don't want to block the UI while we are loading it. The way it works is by passing a **cursor** to the callback (it's the `event.target`). This cursor will have a `contact` property if a contact has been read. Once we have fetched this contact, we need to call `cursor.continue()` to read the next one (another call to `onsuccess` will be made).
+
+About the `contact` object, you can take a look at the documentation to see what it contains. Some useful properties are `name` and `tel`. This last one is actually an array, since contacts can have multiple phone numbers!
+
+```js
+contacts.onsuccess = function (event) {
+  var cursor = event.target;
+  if (cursor.contact) { // we have read a contact
+    console.log(contact.name);
+    cursor.continue(); // load the next one
+  }
+  else { // we have finished reading contacts
+    // ...
+  }
+}
+```
