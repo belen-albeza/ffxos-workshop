@@ -93,4 +93,29 @@ One common pattern in applications is to have the header always visible on top, 
 </body>
 ```
 
+### Contacts WebAPI
+
+Located at `webapi-contacts`.
+
+TODO screenshot.
+
+#### Permissions and certified apps
+
+You need to specify the permissions that you need the user to grant. Also, the Contacts WebAPI is only available at privileged or certified apps; that is, apps from the Marketplace or system apps.
+
+To mark our app as privileged (to be distributed via a Marketplace), you need to update the manifest with the `type` setting. Permissions are stored int he `permissions` keys. You can find a list of all permissions and their different options [in the MDN](https://developer.mozilla.org/en-US/Apps/Developing/App_permissions). TODO link to documentation with list on permissions and another link to info about privileged and certified apps.
+
+For this demo, we need to ask for reading access, so we can display the contacts list.
+
+```json
+"type": "privileged",
+"permissions": {
+  "contacts": {
+    "description": "Required to display your contacts",
+    "access": "readonly"
+  }
+}
+```
+
+#### Contacts WebAPI
 
